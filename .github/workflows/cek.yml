@@ -1,0 +1,31 @@
+name: Cek akses (Bimas + token astro-devs)
+
+# Manual saja. Pakai setelah membuat/memperpanjang ASTRO_DEVS_TOKEN.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  cek:
+    runs-on: ubuntu-latest
+    steps:
+      - name: API SIHAT Bimas bisa diakses dari runner
+        run: |
+          curl -sf --max-time 30 -A 'Mozilla/5.0 (compatible; data-jadwal-sholat)' -H 'Accept: application/json' \
+            https://bimasislam.kemenag.go.id/api/sihat/provinsi | python3 -c 'import sys,json; print(len(json.load(sys.stdin)["data"]), "provinsi")'
+
+      - name: Token bisa tulis branch dan baca PR di astro-devs
+        env:
+          GH_TOKEN: ${{ secrets.ASTRO_DEVS_TOKEN }}
+          R: ehary-devs/astro-devs
+        run: |
+          [ -n "$GH_TOKEN" ] || { echo "::error::ASTRO_DEVS_TOKEN kosong"; exit 1; }
+          sha=$(gh api "repos/$R/git/ref/heads/main" -q .object.sha)
+          ref="cek-token-$GITHUB_RUN_ID"
+          gh api -X POST "repos/$R/git/refs" -f ref="refs/heads/$ref" -f sha="$sha" > /dev/null
+          gh api -X DELETE "repos/$R/git/refs/heads/$ref"
+          echo "Contents: tulis OK"
+          gh pr list -R "$R" --state all --limit 1 > /dev/null
+          echo "Pull requests: baca OK"
