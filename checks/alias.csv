@@ -1,0 +1,18 @@
+bimas_kabko,kode,peran,catatan
+KAB. TOBA SAMOSIR,12.12,utama,nama lama Kabupaten Toba
+KOTA PADANGSIDEMPUAN,12.77,utama,ejaan Kepmendagri: Padangsidimpuan
+KOTA JAKARTA,31.71,utama,Bimas hanya punya satu titik untuk lima kota administrasi
+KOTA JAKARTA,31.72,utama,
+KOTA JAKARTA,31.73,utama,
+KOTA JAKARTA,31.74,utama,
+KOTA JAKARTA,31.75,utama,
+KAB. PAHUWATO,75.04,utama,ejaan Kepmendagri: Pohuwato
+KAB. MAMUJU UTARA,76.01,utama,nama lama Kabupaten Pasangkayu
+KAB. MALUKU TENGGARA BARAT,81.03,utama,nama lama Kabupaten Kepulauan Tanimbar
+PULAU TAMBELAN KAB. BINTAN,21.01,titik,
+PEKAJANG KAB. LINGGA,21.04,titik,
+PULAU SERASAN KAB. NATUNA,21.03,titik,
+PULAU MIDAI KAB. NATUNA,21.03,titik,
+PULAU LAUT KAB. NATUNA,21.03,titik,
+KOTA SOFIFI,82.72,titik,Sofifi bukan kab/kota; wilayah Kota Tidore Kepulauan
+KAB. YAPEN WAROPEN,91.05,abaikan,nama sebelum 2002; entri KAB. KEPULAUAN YAPEN sudah ada

@@ -1,0 +1,81 @@
+name: Perbarui jadwal sholat
+
+# Tanggal 1 tiap bulan: unduh ulang tahun ini + tahun depan dari SIHAT Bimas, verify,
+# commit kalau ada jadwal yang berubah, lalu buka/perbarui PR ke astro-devs.
+# Kalau verify gagal, job berhenti dan data lama tetap tayang.
+on:
+  schedule:
+    - cron: '0 20 1 * *' # 03:00 WIB
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-jadwal
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    env:
+      WILAYAH: ${{ github.workspace }}/data-wilayah/data/wilayah.csv
+      ASTRO_DEVS: ${{ github.workspace }}/astro-devs
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/checkout@v4
+        with:
+          repository: ehary-devs/data-wilayah
+          path: data-wilayah
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - run: pip install pytest && make test
+
+      - run: make fetch build verify
+
+      - name: Commit data kalau jadwal berubah
+        run: |
+          if [ -z "$(git status --porcelain -- data ':!data/meta.json')" ]; then
+            echo "Jadwal tidak berubah."
+            git checkout -- data/meta.json 2>/dev/null || true
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add data
+          git commit -m "data: perbarui jadwal sholat $(date -u +%F)"
+          git push
+
+      - uses: actions/checkout@v4
+        with:
+          repository: ehary-devs/astro-devs
+          path: astro-devs
+          token: ${{ secrets.ASTRO_DEVS_TOKEN }}
+
+      - name: PR ke astro-devs kalau isinya beda
+        env:
+          GH_TOKEN: ${{ secrets.ASTRO_DEVS_TOKEN }}
+          BRANCH: data/jadwal-sholat
+        run: |
+          make sync
+          cd astro-devs
+          if [ -z "$(git status --porcelain -- public/api/jadwal-sholat)" ]; then
+            echo "astro-devs sudah sama."
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git switch -c "$BRANCH"
+          git add public/api/jadwal-sholat
+          git commit -m "data(jadwal-sholat): sinkron dari data-jadwal-sholat@${GITHUB_SHA::7}"
+          git push -f origin "$BRANCH"
+          if [ "$(gh pr view "$BRANCH" --json state -q .state 2>/dev/null)" != "OPEN" ]; then
+            gh pr create --head "$BRANCH" --base main \
+              --title "Perbarui data jadwal sholat" \
+              --body "Otomatis dari ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}. Data sudah lolos \`make verify\` (cakupan 514 kab/kota, tanggal lengkap, urutan waktu, imsak = subuh - 10 menit). Merge untuk deploy."
+          fi
