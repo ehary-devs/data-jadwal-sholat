@@ -1,7 +1,5 @@
 PY := python3
 ASTRO_DEVS ?= ../astrojs/astro-devs
-WILAYAH ?= ../data-wilayah/data/wilayah.csv
-export WILAYAH
 
 .PHONY: all fetch build verify test sync clean
 

@@ -1,0 +1,21 @@
+{
+  "sumber": "Sistem Informasi Hisab Rukyat (SIHAT) Kementerian Agama RI via https://bimasislam.kemenag.go.id/jadwal-sholat",
+  "diambil": "2026-11-21",
+  "tahun": [
+    2026,
+    2027
+  ],
+  "kabkota": 514,
+  "titik_tambahan": 6,
+  "waktu": [
+    "imsak",
+    "subuh",
+    "terbit",
+    "dhuha",
+    "dzuhur",
+    "ashar",
+    "maghrib",
+    "isya"
+  ],
+  "zona_waktu": "waktu setempat (WIB/WITA/WIT sesuai lokasi)"
+}

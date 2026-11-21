@@ -38,13 +38,13 @@ def raw_path(tahun: int, prov: str, kabko: str, bln: int) -> Path:
 
 
 def dms(s: str) -> float:
-    """'6° 59\\' 0.71" S' -> -6.983531"""
-    m = re.fullmatch(r"\s*(\d+)°\s*(\d+)'\s*([\d.]+)\"\s*([NSEWUTB])\s*", s)
+    """'6° 59\\' 0.71" S' -> -6.983531. Bimas kadang tanpa detik, '" ' kosong, atau minus ganda ('-01° 12\\' S')."""
+    m = re.fullmatch(r"\s*-?(\d+)°\s*(\d+)'\s*(?:([\d.]*)\")?\s*([NSEW])\s*", s)
     if not m:
         raise ValueError(f"koordinat tidak dikenali: {s!r}")
     d, mnt, det, arah = m.groups()
-    v = int(d) + int(mnt) / 60 + float(det) / 3600
-    return round(-v if arah in "SWB" else v, 6)
+    v = int(d) + int(mnt) / 60 + float(det or 0) / 3600
+    return round(-v if arah in "SW" else v, 6)  # arah yang menentukan tanda, minus diabaikan
 
 
 def tahun_data() -> list[int]:

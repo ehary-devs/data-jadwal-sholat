@@ -20,6 +20,9 @@ def test_norm_matches_bimas_to_kepmendagri():
 def test_dms():
     assert dms("6° 59' 0.71\" S") == -6.983531
     assert dms("110° 26' 43.02\" E") == 110.445283
+    assert dms("0° 20' N") == 0.333333
+    assert dms("108° 59' \" E") == 108.983333
+    assert dms("-01° 12' S") == -1.2
 
 
 KAB = {"31.71": "Kota Administrasi Jakarta Pusat", "31.72": "Kota Administrasi Jakarta Utara", "21.03": "Kabupaten Natuna"}
